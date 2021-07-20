@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 
 namespace BNFCorrectness
 {
@@ -66,12 +65,8 @@ namespace BNFCorrectness
         /// </summary>
         public void Parse()
         {
-            
-            if (_parsedTokens.Length == 0)
-            {
-                Console.WriteLine("Empty grammar");
-                return;
-            }
+
+            if (_parsedTokens.Length == 0) throw new SyntaxError("Empty grammar");
             _currentToken = _parsedTokens[_currentTokenPosition];
             Rules();
         }
