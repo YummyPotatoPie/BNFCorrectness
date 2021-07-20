@@ -4,6 +4,5 @@
 
 Usage example
 ```
-
 bnfc [filename].bnf
 ```
