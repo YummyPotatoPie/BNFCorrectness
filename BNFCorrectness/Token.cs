@@ -3,6 +3,7 @@
     public enum TokenTag
     {
         Literal = 256,
+        RuleID,
         ProductionOperator,
     }
 
