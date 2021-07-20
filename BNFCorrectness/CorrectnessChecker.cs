@@ -19,7 +19,7 @@ namespace BNFCorrectness
 
             if (Path.GetExtension(grammarFile) != ".bnf")
             {
-                Console.WriteLine("Invalid file extension or file does not exist");
+                Console.WriteLine("Invalid file extension");
                 return;
             }
 
@@ -43,6 +43,11 @@ namespace BNFCorrectness
             catch (SyntaxError ex)
             {
                 Console.WriteLine(ex.Message);
+                return;
+            }
+            catch (FileNotFoundException)
+            {
+                Console.WriteLine("File not found");
                 return;
             }
 
