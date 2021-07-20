@@ -19,4 +19,14 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\BNFCorrectness\BNFCorrectness.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="SymbolStreams">
+      <HintPath>..\..\SymbolStreams.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>
