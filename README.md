@@ -3,7 +3,7 @@
 ## Program that checks correctness of BNF grammar
 
 Usage example
-```Shell
+```
 
-bnfc [filename]
+bnfc [filename].bnf
 ```
