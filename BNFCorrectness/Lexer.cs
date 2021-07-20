@@ -4,6 +4,12 @@ using System.Text;
 
 namespace BNFCorrectness
 {
+    public enum Context
+    {
+        RuleName,
+        RuleExpression
+    }
+
     /// <summary>
     /// Reads tokens from the stream
     /// </summary>
@@ -17,12 +23,17 @@ namespace BNFCorrectness
         /// <summary>
         /// Table contains literals and keywords
         /// </summary>
-        public Hashtable Table = new();
+        public Hashtable Table { get; private set; } = new();
 
         /// <summary>
         /// Symbol stream to read symbols
         /// </summary>
         private readonly ISymbolStream<char> _symbolStream;
+
+        /// <summary>
+        /// Grammar context
+        /// </summary>
+        private Context _context = Context.RuleName;
 
         /// <summary>
         /// Reserved keywords and sets symbol stream
@@ -36,13 +47,12 @@ namespace BNFCorrectness
         }
 
         /// <summary>
-        /// 
+        /// Reserves token at rules table
         /// </summary>
-        /// <param name="wordToken"></param>
         private void Reserve(WordToken wordToken) => Table.Add(wordToken.Lexeme, wordToken);
 
         /// <summary>
-        /// 
+        /// Checks if symbol is operator symbol
         /// </summary>
         /// <returns>True if operator symbol otherwise false</returns>
         private static bool IsOperatorSymbol(char symbol) => ":=".IndexOf(symbol) > -1; 
@@ -64,6 +74,7 @@ namespace BNFCorrectness
             if (productionOperator.ToString() != "::=") 
                 throw new SyntaxError($"Invalid operator at line {Line}. Expected \"::=\", actual \"{productionOperator}\"");
 
+            _context = Context.RuleExpression;
             return WordToken.ProductionOperator;
         }
 
@@ -86,10 +97,14 @@ namespace BNFCorrectness
             if (token != null) return token;
 
             token = new WordToken(stringWord, (int)TokenTag.RuleID);
-            Reserve(token);
+            if (_context == Context.RuleName) Reserve(token);
             return token;
         }
 
+        /// <summary>
+        /// Reads next literal at the stream
+        /// </summary>
+        /// <returns>Token representation of next literal</returns>
         private Token ReadLiteral()
         {
             StringBuilder literal = new();
@@ -135,6 +150,7 @@ namespace BNFCorrectness
             if (char.IsLetterOrDigit(currentSymbol) || currentSymbol == '-') return ReadRuleID();
             if (currentSymbol == ':') return ReadProductionOperator();
             if (currentSymbol == '"' || currentSymbol == '\'') return ReadLiteral();
+            if (currentSymbol == '\n') _context = Context.RuleName;
             _symbolStream.Next();
             return new Token(currentSymbol);
         }
