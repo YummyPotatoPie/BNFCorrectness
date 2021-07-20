@@ -2,7 +2,7 @@
 
 ## Program that checks correctness of BNF grammar
 
-Usage example
+Run from the command line
 ```
 bnfc [filename].bnf
 ```
