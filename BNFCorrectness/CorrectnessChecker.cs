@@ -9,6 +9,12 @@ namespace BNFCorrectness
     {
         public static void Main(string[] args)
         {
+            if (args.Length == 0)
+            {
+                Console.WriteLine("Usage: bnfc [filename].bnf");
+                return;
+            }
+
             string grammarFile = args[0];
 
             if (Path.GetExtension(grammarFile) != ".bnf")
