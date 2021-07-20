@@ -37,7 +37,10 @@ namespace BNFCorrectness
             catch (SyntaxError ex)
             {
                 Console.WriteLine(ex.Message);
+                return;
             }
+
+            Console.WriteLine("Grammar is correct");
         }
     }
 }
