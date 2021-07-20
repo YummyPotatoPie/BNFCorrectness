@@ -71,7 +71,7 @@ namespace BNFCorrectness
         /// Reads next word at the stream
         /// </summary>
         /// <returns>Next token representing next word at the stream</returns>
-        private Token ReadWord()
+        private Token ReadRuleID()
         {
             StringBuilder word = new();
             char buffer = _symbolStream.Peek();
@@ -85,9 +85,26 @@ namespace BNFCorrectness
             WordToken token = (WordToken)Table[stringWord];
             if (token != null) return token;
 
-            token = new WordToken(stringWord, (int)TokenTag.Literal);
+            token = new WordToken(stringWord, (int)TokenTag.RuleID);
             Reserve(token);
             return token;
+        }
+
+        private Token ReadLiteral()
+        {
+            StringBuilder literal = new();
+            char quote = _symbolStream.Peek();
+            char currentSymbol = _symbolStream.Next();
+
+            while (currentSymbol != quote && currentSymbol != default)
+            {
+                literal.Append(currentSymbol);
+                currentSymbol = _symbolStream.Next();
+            }
+
+            if (currentSymbol != quote) throw new SyntaxError($"Expected literal at line {Line}");
+            _symbolStream.Next();
+            return new WordToken(literal.ToString(), (int)TokenTag.Literal);
         }
 
         /// <summary>
@@ -115,8 +132,9 @@ namespace BNFCorrectness
             SkipWhiteSpaces();
             char currentSymbol = _symbolStream.Peek();
             if (currentSymbol == default) return null;
-            if (char.IsLetterOrDigit(currentSymbol) || currentSymbol == '-') return ReadWord();
+            if (char.IsLetterOrDigit(currentSymbol) || currentSymbol == '-') return ReadRuleID();
             if (currentSymbol == ':') return ReadProductionOperator();
+            if (currentSymbol == '"' || currentSymbol == '\'') return ReadLiteral();
             _symbolStream.Next();
             return new Token(currentSymbol);
         }
