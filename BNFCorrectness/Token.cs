@@ -5,6 +5,7 @@
         Literal = 256,
         RuleID,
         ProductionOperator,
+        Regex
     }
 
     /// <summary>
