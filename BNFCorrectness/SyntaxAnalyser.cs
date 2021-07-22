@@ -2,6 +2,9 @@
 
 namespace BNFCorrectness
 {
+    /// <summary>
+    /// Analyser of BNF grammars
+    /// </summary>
     public class SyntaxAnalyser
     {
         /// <summary>
@@ -142,9 +145,9 @@ namespace BNFCorrectness
         /// </summary>
         private void Term()
         {
-            if (_currentToken.Tag == (int)TokenTag.Literal)
+            if (_currentToken.Tag != '<')
             {
-                Match((int)TokenTag.Literal);
+                Match(_currentToken.Tag);
                 return;
             }
             Match('<'); RuleName(); Match('>');
