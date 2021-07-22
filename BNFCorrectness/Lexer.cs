@@ -1,9 +1,14 @@
 ﻿using SymbolStreams;
 using System.Collections;
 using System.Text;
+using System.Text.RegularExpressions;
+using System;
 
 namespace BNFCorrectness
 {
+    /// <summary>
+    /// Represents grammar context
+    /// </summary>
     public enum Context
     {
         RuleName,
@@ -123,6 +128,42 @@ namespace BNFCorrectness
         }
 
         /// <summary>
+        /// Reads next regular expression as a term at the stream
+        /// </summary>
+        /// <returns>Token representing regular expression</returns>
+        private Token ReadRegex()
+        {
+            StringBuilder regexBuilder = new();
+            char currentSymbol = _symbolStream.Peek();
+            regexBuilder.Append(currentSymbol);
+            currentSymbol = _symbolStream.Next();
+            int nesting = 1;
+
+            while (nesting != 0 && currentSymbol != default)
+            {
+                if (currentSymbol == '(') nesting++;
+                else if (currentSymbol == ')') nesting--;
+
+                regexBuilder.Append(currentSymbol);
+                currentSymbol =_symbolStream.Next();
+            }
+
+            string regex = regexBuilder.ToString();
+
+            try
+            {
+                Regex regexCheck = new(regex);
+            }
+            catch (ArgumentException)
+            {
+                throw new SyntaxError($"Invalid regular expression at line {Line}");
+            }
+
+            return new WordToken(regex, (int)TokenTag.Regex);
+
+        }
+
+        /// <summary>
         /// Skips whitespaces 
         /// </summary>
         private void SkipWhiteSpaces()
@@ -150,6 +191,7 @@ namespace BNFCorrectness
             if (char.IsLetterOrDigit(currentSymbol) || currentSymbol == '-') return ReadRuleID();
             if (currentSymbol == ':') return ReadProductionOperator();
             if (currentSymbol == '"' || currentSymbol == '\'') return ReadLiteral();
+            if (currentSymbol == '(') return ReadRegex();
             if (currentSymbol == '\n') _context = Context.RuleName;
             _symbolStream.Next();
             return new Token(currentSymbol);
