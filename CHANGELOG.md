@@ -6,7 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 - Nice looking error messages
-- Comments support
+
+## [1.2.0] - 2021-07-23
+### Added
+-Added comments support
 
 ## [1.1.0] - 2021-07-22
 ### Added
