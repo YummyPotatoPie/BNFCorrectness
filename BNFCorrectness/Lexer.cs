@@ -180,6 +180,16 @@ namespace BNFCorrectness
         }
 
         /// <summary>
+        /// Skips comment
+        /// </summary>
+        private void SkipComment()
+        {
+            char currentSymbol = _symbolStream.Next();
+            while (currentSymbol != '%' && currentSymbol != default) currentSymbol = _symbolStream.Next();
+            _symbolStream.Next();
+        }
+
+        /// <summary>
         /// Reads next token representing current lexeme at the stream
         /// </summary>
         /// <returns>Next token at the stream</returns>
@@ -193,6 +203,11 @@ namespace BNFCorrectness
             if (currentSymbol == '"' || currentSymbol == '\'') return ReadLiteral();
             if (currentSymbol == '(') return ReadRegex();
             if (currentSymbol == '\n') _context = Context.RuleName;
+            if (currentSymbol == '%')
+            {
+                SkipComment();
+                return GetNextToken();
+            }
             _symbolStream.Next();
             return new Token(currentSymbol);
         }
